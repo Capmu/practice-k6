@@ -1,5 +1,6 @@
 import http from "k6/http";
 import { check, sleep } from "k6";
+import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 
 export const options = {
   // A number specifying the number of VUs to run concurrently.
@@ -8,9 +9,9 @@ export const options = {
   // duration: '30s',
 
   stages: [
-    { duration: "10s", target: 20 },
-    { duration: "5s", target: 2 },
-    { duration: "5s", target: 0 },
+    { duration: "3s", target: 20 },
+    { duration: "2s", target: 2 },
+    { duration: "1s", target: 0 },
   ],
 
   // The following section contains configuration options for execution of this
@@ -62,5 +63,12 @@ export const options = {
 export default function () {
   const res = http.get("https://test.k6.io");
   check(res, { "status was 200": (r) => r.status == 200 });
+  check(res, { "status was 200 ouou": (r) => r.status == 200 });
   sleep(1);
+}
+
+export function handleSummary(data) {
+  return {
+    "summary.html": htmlReport(data),
+  };
 }
